@@ -1,22 +1,14 @@
-import React from "react";
-import {
-  Box,
-  Icon,
-  Button as MUIButton,
-  SvgIcon,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Box, Button as MUIButton, Typography, useTheme } from "@mui/material";
 import {
   Repository,
   remove,
   setHovered,
 } from "../../app/features/repository/respositorySlice";
 import { formatDate, formatNumberAsK } from "../../helpers";
-import STAR_ICON from "../../assets/star.svg";
 import { Star, Trash2 } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { selectHovered } from "../../app/store";
+import { useSearchParams } from "react-router-dom";
 interface RepositoryButtonProps extends Repository {}
 
 export const RepositoryButton = (props: RepositoryButtonProps) => {
@@ -24,6 +16,19 @@ export const RepositoryButton = (props: RepositoryButtonProps) => {
   const dispatch = useDispatch();
   const hovered = useSelector(selectHovered);
   const ishovered = hovered === props.id;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const removeRepo = (repoId: number) => {
+    dispatch(remove(repoId));
+    const existingRepoIds = (searchParams.get("repoNames") ?? "")
+      .split("-")
+      .filter((repo) => repo !== "");
+
+    // Add the new repository ID to the list
+    const updatedRepoIds: string[] = existingRepoIds.filter(
+      (id) => id !== repoId.toString()
+    );
+    setSearchParams({ repoNames: updatedRepoIds.join("-") });
+  };
   return (
     <MUIButton
       sx={(theme) => ({
@@ -44,14 +49,14 @@ export const RepositoryButton = (props: RepositoryButtonProps) => {
         opacity: hovered === null || ishovered ? 1 : 0.3,
       })}
       fullWidth
-      onMouseEnter={(_event) => {
+      onMouseEnter={() => {
         dispatch(setHovered(props.id));
       }}
-      onMouseLeave={(_event) => {
+      onMouseLeave={() => {
         dispatch(setHovered(null));
       }}
       onClick={() => {
-        dispatch(remove(props.id));
+        removeRepo(props.id);
       }}
     >
       <Box sx={{ flexShrink: 1 }}>

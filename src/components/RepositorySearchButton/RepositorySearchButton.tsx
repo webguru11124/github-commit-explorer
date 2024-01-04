@@ -11,7 +11,8 @@ import {
 } from "../../app/features/repository/respositorySlice";
 import { githubAPIService } from "../../app/api/githubAPIService";
 import { generateColorFromRepositoryId } from "../../helpers/color";
-import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
+import { useSnackbar } from "notistack";
+import { useSearchParams } from "react-router-dom";
 
 export function RepositorySearchButton() {
   const [inputValue, setInputValue] = useState<string>("");
@@ -41,11 +42,31 @@ export function RepositorySearchButton() {
   const options = searchResults || [];
 
   if (error) {
-    enqueueSnackbar(`Error: ${(error as any).message ?? ""}`, {
+    enqueueSnackbar(`Error: ${error.message ?? ""}`, {
       variant: "error",
     });
   }
+  const [searchParams, setSearchParams] = useSearchParams();
 
+  const addRepo = (newValue: Repository) => {
+    dispatch(
+      add({
+        ...newValue,
+        color: generateColorFromRepositoryId(newValue.id),
+      })
+    );
+    const existingRepoIds = (searchParams.get("repoIds") ?? "")
+      .split("-")
+      .filter((repo) => repo != "");
+
+    // Add the new repository ID to the list
+    const updatedRepoIds: string[] = [
+      ...existingRepoIds,
+      newValue.id.toString(),
+    ];
+    // Update the URL with the new repository IDs
+    setSearchParams({ repoIds: updatedRepoIds.join("-") });
+  };
   return (
     <Autocomplete
       sx={{
@@ -61,12 +82,7 @@ export function RepositorySearchButton() {
       noOptionsText="No Repos"
       onChange={(_event, newValue: Repository | null) => {
         if (newValue) {
-          dispatch(
-            add({
-              ...newValue,
-              color: generateColorFromRepositoryId(newValue.id),
-            })
-          );
+          addRepo(newValue);
         }
       }}
       onInputChange={(_event, newInputValue) => {

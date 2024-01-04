@@ -26,7 +26,7 @@ export const githubAPIService = createApi({
         },
         meta: { color, id }, // Include color in the meta object
       }),
-      transformResponse: (response: CommitActivity[], meta, arg): Commits => {
+      transformResponse: (response: CommitActivity[], _meta, arg): Commits => {
         const res: number[] = new Array(7).fill(0);
         console.log(response);
         if (!isArray(response)) {

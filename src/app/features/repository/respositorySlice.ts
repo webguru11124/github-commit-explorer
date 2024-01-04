@@ -28,7 +28,8 @@ export const repositorySlice = createSlice({
   initialState,
   reducers: {
     add: (state, action: PayloadAction<Repository>) => {
-      state.repos.push(action.payload);
+      if (!state.repos.find((repo) => repo.id === action.payload.id))
+        state.repos.push(action.payload);
     },
     setHovered: (state, action: PayloadAction<number | null>) => {
       state.hovered = action.payload;

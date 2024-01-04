@@ -1,4 +1,4 @@
-import { Container, Grid, Stack } from "@mui/material";
+import {  Grid } from "@mui/material";
 import { GraphPanel } from "../GraphPanel/GraphPanel";
 import { RepositoryManager } from "../RepositoryManager/RepositoryManager";
 
