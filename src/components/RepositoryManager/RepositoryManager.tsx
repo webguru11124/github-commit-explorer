@@ -1,11 +1,18 @@
 import { Box } from "@mui/material";
 import { RepositoryButton } from "../RepositoryButton/RepositoryButton";
 import { RepositorySearchButton } from "../RepositorySearchButton/RepositorySearchButton";
-import { useSelector } from "react-redux";
 import { selectRepos } from "../../app/store";
 
+import { useDispatch, useSelector } from "react-redux";
+import { selectHovered } from "../../app/store";
+import { setHovered } from "../../app/features/repository/respositorySlice";
+import { useRepositoryAction } from "../../app/hooks/useRespositoryAction";
 export const RepositoryManager = () => {
   const repos = useSelector(selectRepos);
+  const { removeRepo } = useRepositoryAction();
+
+  const dispatch = useDispatch();
+  const hovered = useSelector(selectHovered);
   return (
     <Box
       px={3}
@@ -19,7 +26,12 @@ export const RepositoryManager = () => {
       <Box mt={2.5}>
         {repos.map((repo) => (
           <Box mt={2} key={repo.id}>
-            <RepositoryButton {...repo}></RepositoryButton>
+            <RepositoryButton
+              repo={repo}
+              ishovered={hovered === repo.id || hovered === null}
+              onClick={(repo) => removeRepo(repo)}
+              onHover={(id) => dispatch(setHovered(id))}
+            ></RepositoryButton>
           </Box>
         ))}
       </Box>

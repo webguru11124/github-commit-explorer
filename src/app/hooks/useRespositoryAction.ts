@@ -5,9 +5,11 @@ import {
   add,
   remove,
   resetRepos,
+  setLoading,
 } from "../features/repository/respositorySlice";
 import { generateColorFromRepositoryId } from "../../helpers/color";
 import { githubAPIService } from "../api/githubAPIService";
+import React from "react";
 
 export function useRepositoryAction() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -16,7 +18,8 @@ export function useRepositoryAction() {
 
   // interact with the cache in the same way as you would with a useFetch...() hook
 
-  const fetchRepos = async () => {
+  const fetchRepos = React.useCallback(async () => {
+    dispatch(setLoading(true));
     const existingRepoNames = (searchParams.get("repoNames") ?? "")
       .split(",")
       .filter((repo) => repo !== "");
@@ -44,9 +47,9 @@ export function useRepositoryAction() {
         });
       }
     }
-  };
+  }, []);
 
-  const removeRepo = (repo: Repository) => {
+  const removeRepo = React.useCallback((repo: Repository) => {
     dispatch(remove(repo.id));
     const existingRepoNames = (searchParams.get("repoNames") ?? "")
       .split(",")
@@ -57,9 +60,9 @@ export function useRepositoryAction() {
       (name) => name !== repo.full_name
     );
     setSearchParams({ repoNames: updatedRepoNames.join(",") });
-  };
+  }, []);
 
-  const addRepo = (newValue: Repository) => {
+  const addRepo = React.useCallback((newValue: Repository) => {
     dispatch(
       add({
         ...newValue,
@@ -77,6 +80,6 @@ export function useRepositoryAction() {
     ];
     // Update the URL with the new repository Names
     setSearchParams({ repoNames: updatedRepoNames.join(",") });
-  };
+  }, []);
   return { removeRepo, addRepo, fetchRepos };
 }

@@ -16,9 +16,11 @@ export type Repository = {
 interface RepositoryState {
   repos: Repository[];
   hovered: number | null;
+  loading: boolean;
 }
 const initialState: RepositoryState = {
   repos: [],
+  loading: false,
   hovered: null,
 }; // Explicitly define the type
 
@@ -26,9 +28,14 @@ export const repositorySlice = createSlice({
   name: "repository",
   initialState,
   reducers: {
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading = action.payload;
+    },
     resetRepos: (state, action: PayloadAction<Repository[]>) => {
-      if (action.payload && Array.isArray(action.payload))
+      if (action.payload && Array.isArray(action.payload)) {
         state.repos = action.payload;
+        state.loading = false;
+      }
     },
     add: (state, action: PayloadAction<Repository>) => {
       if (!state.repos.find((repo) => repo.id === action.payload.id))
@@ -42,6 +49,7 @@ export const repositorySlice = createSlice({
     },
   },
 });
-export const { add, setHovered, remove, resetRepos } = repositorySlice.actions;
+export const { add, setHovered, remove, setLoading, resetRepos } =
+  repositorySlice.actions;
 
 export default repositorySlice.reducer;

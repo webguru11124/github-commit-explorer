@@ -1,29 +1,30 @@
 import { Box, Button as MUIButton, Typography, useTheme } from "@mui/material";
-import {
-  Repository,
-  setHovered,
-} from "../../app/features/repository/respositorySlice";
+import { Repository } from "../../app/features/repository/respositorySlice";
 import { formatDate, formatNumberAsK } from "../../helpers";
 import { Star, Trash2 } from "react-feather";
-import { useDispatch, useSelector } from "react-redux";
-import { selectHovered } from "../../app/store";
-import { useRepositoryAction } from "../../app/hooks/useRespositoryAction";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-interface RepositoryButtonProps extends Repository {}
+import { UnknownAction } from "@reduxjs/toolkit";
+interface RepositoryButtonProps {
+  repo: Repository;
+  ishovered: boolean;
+  onClick: (repo: Repository) => void;
+  onHover: (repoID: number | null) => UnknownAction;
+}
 
-export const RepositoryButton = (props: RepositoryButtonProps) => {
+export const RepositoryButton = ({
+  repo,
+  ishovered,
+  onClick,
+  onHover,
+}: RepositoryButtonProps) => {
   const theme = useTheme();
-  const hovered = useSelector(selectHovered);
-  const ishovered = hovered === props.id;
-  const { removeRepo } = useRepositoryAction();
-  const dispatch = useDispatch();
 
   return (
     <MUIButton
       sx={(theme) => ({
         backgroundColor: theme.palette.grey[900],
         borderRadius: "4px",
-        boxShadow: `8px 0px 0px 0px ${props.color} inset`,
+        boxShadow: `8px 0px 0px 0px ${repo.color} inset`,
         color: "white",
         display: "flex",
         justifyContent: "space-between",
@@ -34,17 +35,17 @@ export const RepositoryButton = (props: RepositoryButtonProps) => {
         "&:active": {
           opacity: 0.7,
         },
-        opacity: hovered === null || ishovered ? 1 : 0.3,
+        opacity: ishovered ? 1 : 0.3,
       })}
       fullWidth
       onMouseEnter={() => {
-        dispatch(setHovered(props.id));
+        onHover(repo.id);
       }}
       onMouseLeave={() => {
-        dispatch(setHovered(null));
+        onHover(null);
       }}
       onClick={() => {
-        removeRepo(props);
+        onClick(repo);
       }}
     >
       <Grid2 container px={3} py={2} spacing={2} width="100%">
@@ -59,7 +60,7 @@ export const RepositoryButton = (props: RepositoryButtonProps) => {
               component="div"
               color="text.secondary"
             >
-              {`${props.owner.login} / `}
+              {`${repo.owner.login} / `}
             </Typography>
             <Typography
               variant="button"
@@ -67,7 +68,7 @@ export const RepositoryButton = (props: RepositoryButtonProps) => {
               sx={{ fontWeight: "bold" }}
               color="white"
             >
-              {props.name}
+              {repo.name}
             </Typography>
           </Box>
           <Box
@@ -88,7 +89,7 @@ export const RepositoryButton = (props: RepositoryButtonProps) => {
                 alignItems: "center",
               }}
             >
-              {formatNumberAsK(props.stargazers_count)}
+              {formatNumberAsK(repo.stargazers_count)}
             </Typography>
             <Typography
               variant="body2"
@@ -98,7 +99,7 @@ export const RepositoryButton = (props: RepositoryButtonProps) => {
               display={{ xs: "none", lg: "block" }}
               color="text.secondary"
             >
-              {`Updated ${formatDate(props.updated_at)}`}
+              {`Updated ${formatDate(repo.updated_at)}`}
             </Typography>
           </Box>
         </Grid2>
