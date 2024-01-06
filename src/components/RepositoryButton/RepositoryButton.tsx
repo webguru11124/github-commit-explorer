@@ -44,7 +44,7 @@ export const RepositoryButton = (props: RepositoryButtonProps) => {
         dispatch(setHovered(null));
       }}
       onClick={() => {
-        removeRepo(props.id);
+        removeRepo(props);
       }}
     >
       <Grid2 container px={3} py={2} spacing={2} width="100%">

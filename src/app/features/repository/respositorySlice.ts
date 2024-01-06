@@ -26,6 +26,10 @@ export const repositorySlice = createSlice({
   name: "repository",
   initialState,
   reducers: {
+    resetRepos: (state, action: PayloadAction<Repository[]>) => {
+      if (action.payload && Array.isArray(action.payload))
+        state.repos = action.payload;
+    },
     add: (state, action: PayloadAction<Repository>) => {
       if (!state.repos.find((repo) => repo.id === action.payload.id))
         state.repos.push(action.payload);
@@ -38,6 +42,6 @@ export const repositorySlice = createSlice({
     },
   },
 });
-export const { add, setHovered, remove } = repositorySlice.actions;
+export const { add, setHovered, remove, resetRepos } = repositorySlice.actions;
 
 export default repositorySlice.reducer;

@@ -41,6 +41,7 @@ export const githubAPIService = createApi({
         return { commits: res, color: arg.color, id: arg.id };
       },
     }),
+    
     searchRepos: builder.query<Repository[], string>({
       query: (searchText: string) => ({
         url: `/search/repositories?q=${searchText}`,

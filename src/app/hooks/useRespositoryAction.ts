@@ -1,22 +1,62 @@
 import { useDispatch } from "react-redux";
 import { useSearchParams } from "react-router-dom";
-import { Repository, add, remove } from "../features/repository/respositorySlice";
+import {
+  Repository,
+  add,
+  remove,
+  resetRepos,
+} from "../features/repository/respositorySlice";
 import { generateColorFromRepositoryId } from "../../helpers/color";
+import { githubAPIService } from "../api/githubAPIService";
 
 export function useRepositoryAction() {
   const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch();
-  const removeRepo = (repoId: number) => {
-    dispatch(remove(repoId));
-    const existingRepoIds = (searchParams.get("repoNames") ?? "")
-      .split("-")
+  const [trigger] = githubAPIService.useLazySearchReposQuery();
+
+  // interact with the cache in the same way as you would with a useFetch...() hook
+
+  const fetchRepos = async () => {
+    const existingRepoNames = (searchParams.get("repoNames") ?? "")
+      .split(",")
+      .filter((repo) => repo !== "");
+
+    try {
+      const repos: Array<Repository[]> = await Promise.all(
+        existingRepoNames.map((name) => trigger(`repo:${name}`).unwrap())
+      );
+      dispatch(
+        resetRepos(
+          repos
+            .filter((repo) => repo.length > 0)
+            .map((repo) => ({
+              ...repo[0],
+              color: generateColorFromRepositoryId(repo[0].id),
+            }))
+        )
+      );
+    } catch (error) {
+      if (error) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-expect-error
+        enqueueSnackbar(`Error: ${error.message ?? ""} `, {
+          variant: "error",
+        });
+      }
+    }
+  };
+
+  const removeRepo = (repo: Repository) => {
+    dispatch(remove(repo.id));
+    const existingRepoNames = (searchParams.get("repoNames") ?? "")
+      .split(",")
       .filter((repo) => repo !== "");
 
     // Add the new repository ID to the list
-    const updatedRepoIds: string[] = existingRepoIds.filter(
-      (id) => id !== repoId.toString()
+    const updatedRepoNames: string[] = existingRepoNames.filter(
+      (name) => name !== repo.full_name
     );
-    setSearchParams({ repoNames: updatedRepoIds.join("-") });
+    setSearchParams({ repoNames: updatedRepoNames.join(",") });
   };
 
   const addRepo = (newValue: Repository) => {
@@ -26,17 +66,17 @@ export function useRepositoryAction() {
         color: generateColorFromRepositoryId(newValue.id),
       })
     );
-    const existingRepoIds = (searchParams.get("repoIds") ?? "")
-      .split("-")
+    const existingRepoNames = (searchParams.get("repoNames") ?? "")
+      .split(",")
       .filter((repo) => repo != "");
 
     // Add the new repository ID to the list
-    const updatedRepoIds: string[] = [
-      ...existingRepoIds,
-      newValue.id.toString(),
+    const updatedRepoNames: string[] = [
+      ...existingRepoNames,
+      newValue.full_name,
     ];
-    // Update the URL with the new repository IDs
-    setSearchParams({ repoIds: updatedRepoIds.join("-") });
+    // Update the URL with the new repository Names
+    setSearchParams({ repoNames: updatedRepoNames.join(",") });
   };
-  return { removeRepo, addRepo };
+  return { removeRepo, addRepo, fetchRepos };
 }

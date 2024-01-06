@@ -1,15 +1,13 @@
 import { useEffect } from "react";
 import "./App.css";
 import { ExplorerLayout } from "./components/ExplorerLayout/ExplorerLayout";
-import { useSearchParams } from "react-router-dom";
+import { useRepositoryAction } from "./app/hooks/useRespositoryAction";
 
 function App() {
-  // const [searchParams, setSearchParams] = useSearchParams();
-  // useEffect(() => {
-  //   const existingRepoIds = (searchParams.get("repoIds") ?? "")
-  //     .split("-")
-  //     .filter((repo) => repo !== "");
-  // }, []);
+  const { fetchRepos } = useRepositoryAction();
+  useEffect(() => {
+    fetchRepos();
+  }, [fetchRepos]);
   return <ExplorerLayout />;
 }
 

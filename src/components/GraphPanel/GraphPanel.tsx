@@ -40,7 +40,9 @@ export const GraphPanel = () => {
       datasets: commitActivities
         .map((activity) => {
           // Extract RGB values from the rgb(x, x, x) string
-          const rgbValues = activity.color.match(/\d+/g);
+          const rgbValues = activity.color
+            ? activity.color.match(/\d+/g)
+            : null;
           let rgbaColor;
           if (rgbValues) {
             // Set the desired alpha value for opacity (0.5 for 50% opacity)
