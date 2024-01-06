@@ -47,6 +47,6 @@ This will start the development server, and you can access the application at [h
 
 ## Demo
 
-Watch a demo of the application on [Loom](https://www.loom.com/share/700e0292464d4910b593047529d9351c).
+Watch a demo of the application on [Loom](https://www.loom.com/share/0bfaf35cfdda454a86872fdca53d2623).
 
 Feel free to explore, contribute, and enhance the project!
