@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { githubAPIService } from "../../api/githubAPIService";
 export type Repository = {
   full_name: string;
   id: number;

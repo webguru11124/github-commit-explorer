@@ -1,34 +1,22 @@
 import { Box, Button as MUIButton, Typography, useTheme } from "@mui/material";
 import {
   Repository,
-  remove,
   setHovered,
 } from "../../app/features/repository/respositorySlice";
 import { formatDate, formatNumberAsK } from "../../helpers";
 import { Star, Trash2 } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { selectHovered } from "../../app/store";
-import { useSearchParams } from "react-router-dom";
+import { useRepositoryAction } from "../../app/hooks/useRespositoryAction";
 interface RepositoryButtonProps extends Repository {}
 
 export const RepositoryButton = (props: RepositoryButtonProps) => {
   const theme = useTheme();
-  const dispatch = useDispatch();
   const hovered = useSelector(selectHovered);
   const ishovered = hovered === props.id;
-  const [searchParams, setSearchParams] = useSearchParams();
-  const removeRepo = (repoId: number) => {
-    dispatch(remove(repoId));
-    const existingRepoIds = (searchParams.get("repoNames") ?? "")
-      .split("-")
-      .filter((repo) => repo !== "");
+  const { removeRepo } = useRepositoryAction();
+  const dispatch = useDispatch();
 
-    // Add the new repository ID to the list
-    const updatedRepoIds: string[] = existingRepoIds.filter(
-      (id) => id !== repoId.toString()
-    );
-    setSearchParams({ repoNames: updatedRepoIds.join("-") });
-  };
   return (
     <MUIButton
       sx={(theme) => ({
@@ -42,6 +30,7 @@ export const RepositoryButton = (props: RepositoryButtonProps) => {
         justifyContent: "space-between",
         "&:hover": {
           backgroundColor: theme.palette.grey[900], // Set the hover color
+          opacity: 0.8,
         },
         "&:active": {
           opacity: 0.7,

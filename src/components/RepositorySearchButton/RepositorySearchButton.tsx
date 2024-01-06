@@ -1,25 +1,20 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Typography from "@mui/material/Typography";
 import { debounce } from "@mui/material/utils";
 import { useTheme } from "@mui/material";
-import { useDispatch } from "react-redux";
-import {
-  Repository,
-  add,
-} from "../../app/features/repository/respositorySlice";
+import { Repository } from "../../app/features/repository/respositorySlice";
 import { githubAPIService } from "../../app/api/githubAPIService";
-import { generateColorFromRepositoryId } from "../../helpers/color";
 import { useSnackbar } from "notistack";
-import { useSearchParams } from "react-router-dom";
+import { useRepositoryAction } from "../../app/hooks/useRespositoryAction";
 
 export function RepositorySearchButton() {
   const [inputValue, setInputValue] = useState<string>("");
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
-  const dispatch = useDispatch();
-
+  const { addRepo } = useRepositoryAction();
   // Trigger the lazy query with debounce
   const [trigger, { data: searchResults, error }] =
     githubAPIService.useLazySearchReposQuery();
@@ -42,31 +37,12 @@ export function RepositorySearchButton() {
   const options = searchResults || [];
 
   if (error) {
+    //@ts-expect-error
     enqueueSnackbar(`Error: ${error.message ?? ""}`, {
       variant: "error",
     });
   }
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const addRepo = (newValue: Repository) => {
-    dispatch(
-      add({
-        ...newValue,
-        color: generateColorFromRepositoryId(newValue.id),
-      })
-    );
-    const existingRepoIds = (searchParams.get("repoIds") ?? "")
-      .split("-")
-      .filter((repo) => repo != "");
-
-    // Add the new repository ID to the list
-    const updatedRepoIds: string[] = [
-      ...existingRepoIds,
-      newValue.id.toString(),
-    ];
-    // Update the URL with the new repository IDs
-    setSearchParams({ repoIds: updatedRepoIds.join("-") });
-  };
+  
   return (
     <Autocomplete
       sx={{

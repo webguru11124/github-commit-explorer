@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import React from "react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -9,14 +10,14 @@ import {
   Tooltip,
   ChartEvent,
   ActiveElement,
+  TooltipItem,
 } from "chart.js";
 import { useDispatch, useSelector } from "react-redux";
-import { selectHovered, selectRepos } from "../../app/store";
-import { Commits, githubAPIService } from "../../app/api/githubAPIService";
+import { selectHovered } from "../../app/store";
 import { getWeekday } from "../../helpers";
 import { Box } from "@mui/material";
 import { setHovered } from "../../app/features/repository/respositorySlice";
-import { useSnackbar } from "notistack";
+import { useCommitActivities } from "../../hooks/useCommitActivities";
 
 // Register the chart.js components we will use
 ChartJS.register(
@@ -28,45 +29,28 @@ ChartJS.register(
 );
 
 export const GraphPanel = () => {
-  const repos = useSelector(selectRepos);
-  const { enqueueSnackbar } = useSnackbar();
-  const [trigger, { error }] = githubAPIService.useLazyGetCommitActivityQuery();
-
   const hovered = useSelector(selectHovered);
-  const [commitActivities, setCommitActivities] = React.useState<
-    Array<Commits>
-  >([]);
+  const { commitActivities } = useCommitActivities();
   const dispatch = useDispatch();
-  useEffect(() => {
-    async function fetchCommitActivities() {
-      const activities: Array<Commits> = await Promise.all(
-        repos.map((repo) =>
-          trigger({
-            owner: repo.owner.login,
-            repo: repo.name,
-            color: repo.color,
-            id: repo.id,
-          }).unwrap()
-        )
-      );
-      setCommitActivities(activities);
-    }
-    fetchCommitActivities();
-  }, [repos, trigger]);
 
   const chartRef = React.useRef();
   const data = React.useMemo(
     () => ({
       labels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], // Adjust labels based on your data
-      datasets: commitActivities.map((activity) => {
-        // Extract RGB values from the rgb(x, x, x) string
-        const rgbValues = activity.color.match(/\d+/g);
-        if (rgbValues) {
-          // Set the desired alpha value for opacity (0.5 for 50% opacity)
-          const alpha = hovered === null || hovered === activity.id ? 1 : 0.1;
+      datasets: commitActivities
+        .map((activity) => {
+          // Extract RGB values from the rgb(x, x, x) string
+          const rgbValues = activity.color.match(/\d+/g);
+          let rgbaColor;
+          if (rgbValues) {
+            // Set the desired alpha value for opacity (0.5 for 50% opacity)
+            const alpha = hovered === null || hovered === activity.id ? 1 : 0.1;
 
-          // Convert to rgba format with the specified alpha
-          const rgbaColor = `rgba(${rgbValues[0]}, ${rgbValues[1]}, ${rgbValues[2]}, ${alpha})`;
+            // Convert to rgba format with the specified alpha
+            rgbaColor = `rgba(${rgbValues[0]}, ${rgbValues[1]}, ${rgbValues[2]}, ${alpha})`;
+          } else {
+            rgbaColor = `rgba(0, 0, 0, 0.05)`;
+          }
 
           return {
             label: "Commits over Time",
@@ -83,8 +67,8 @@ export const GraphPanel = () => {
             pointBorderWidth: 2,
             pointHoverBackgroundColor: rgbaColor,
           };
-        }
-      }),
+        })
+        .filter(Boolean),
     }),
     [commitActivities, hovered]
   );
@@ -124,7 +108,7 @@ export const GraphPanel = () => {
       tooltip: {
         enabled: true,
         callbacks: {
-          label: function (context: any) {
+          label: function (context: TooltipItem<"line">) {
             // context contains a lot of information about the point and dataset
             const labelIndex = context.dataIndex;
             const datasetIndex = context.datasetIndex;
@@ -139,17 +123,11 @@ export const GraphPanel = () => {
       },
     },
   };
-  if (error) {
-    console.log("error", error);
-    enqueueSnackbar(`Error: ${(error as any).message ?? ""}`, {
-      variant: "error",
-    });
-  }
   return (
     <Box display="flex" alignItems="center" height="100vh">
       <Line
         ref={chartRef}
-        data={data as any}
+        data={data}
         options={options}
         style={{ height: "100%" }}
       />
