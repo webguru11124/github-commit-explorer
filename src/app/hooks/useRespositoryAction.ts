@@ -47,39 +47,46 @@ export function useRepositoryAction() {
         });
       }
     }
-  }, []);
+  }, [dispatch]);
 
-  const removeRepo = React.useCallback((repo: Repository) => {
-    dispatch(remove(repo.id));
-    const existingRepoNames = (searchParams.get("repoNames") ?? "")
-      .split(",")
-      .filter((repo) => repo !== "");
+  const removeRepo = React.useCallback(
+    (repo: Repository) => {
+      dispatch(remove(repo.id));
+      const existingRepoNames = (searchParams.get("repoNames") ?? "")
+        .split(",")
+        .filter((repo) => repo !== "");
 
-    // Add the new repository ID to the list
-    const updatedRepoNames: string[] = existingRepoNames.filter(
-      (name) => name !== repo.full_name
-    );
-    setSearchParams({ repoNames: updatedRepoNames.join(",") });
-  }, []);
+      // Add the new repository ID to the list
+      const updatedRepoNames: string[] = existingRepoNames.filter(
+        (name) => name !== repo.full_name
+      );
+      setSearchParams({ repoNames: updatedRepoNames.join(",") });
+    },
+    [dispatch, searchParams, setSearchParams]
+  );
 
-  const addRepo = React.useCallback((newValue: Repository) => {
-    dispatch(
-      add({
-        ...newValue,
-        color: generateColorFromRepositoryId(newValue.id),
-      })
-    );
-    const existingRepoNames = (searchParams.get("repoNames") ?? "")
-      .split(",")
-      .filter((repo) => repo != "");
+  const addRepo = React.useCallback(
+    (newValue: Repository) => {
+      console.log("call add repo");
+      dispatch(
+        add({
+          ...newValue,
+          color: generateColorFromRepositoryId(newValue.id),
+        })
+      );
+      const existingRepoNames = (searchParams.get("repoNames") ?? "")
+        .split(",")
+        .filter((repo) => repo != "");
 
-    // Add the new repository ID to the list
-    const updatedRepoNames: string[] = [
-      ...existingRepoNames,
-      newValue.full_name,
-    ];
-    // Update the URL with the new repository Names
-    setSearchParams({ repoNames: updatedRepoNames.join(",") });
-  }, []);
+      // Add the new repository ID to the list
+      const updatedRepoNames: string[] = [
+        ...existingRepoNames,
+        newValue.full_name,
+      ];
+      // Update the URL with the new repository Names
+      setSearchParams({ repoNames: updatedRepoNames.join(",") });
+    },
+    [dispatch, searchParams, setSearchParams]
+  );
   return { removeRepo, addRepo, fetchRepos };
 }

@@ -20,8 +20,6 @@ export const ExplorerLayout = () => {
     fetchRepos();
   }, [fetchRepos]);
 
-  console.log(loading);
-
   if (loading) {
     return (
       <FullScreenBox>
