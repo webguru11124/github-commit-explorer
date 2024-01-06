@@ -28,7 +28,7 @@ ChartJS.register(
   Tooltip
 );
 
-export const GraphPanel = () => {
+export const CommitGraph = () => {
   const hovered = useSelector(selectHovered);
   const { commitActivities } = useCommitActivities();
   const dispatch = useDispatch();
@@ -125,7 +125,7 @@ export const GraphPanel = () => {
       },
     },
   };
-  
+
   return (
     <Box display="flex" alignItems="center" height="100%">
       <Line

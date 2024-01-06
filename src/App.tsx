@@ -1,9 +1,8 @@
-
 import "./App.css";
-import { ExplorerLayout } from "./components/ExplorerLayout/ExplorerLayout";
+import { ExplorerPage } from "./pages/ExplorerPage/ExplorerPage";
 
 function App() {
-  return <ExplorerLayout />;
+  return <ExplorerPage />;
 }
 
 export default App;

@@ -1,6 +1,6 @@
 import { Box, CircularProgress, Grid, styled } from "@mui/material";
-import { GraphPanel } from "../GraphPanel/GraphPanel";
-import { RepositoryManager } from "../RepositoryManager/RepositoryManager";
+import { CommitGraph } from "../../components/CommitGraph/CommitGraph";
+import { RepositoryManager } from "../../components/RepositoryManager/RepositoryManager";
 import { useEffect } from "react";
 import { useRepositoryAction } from "../../app/hooks/useRespositoryAction";
 import { useSelector } from "react-redux";
@@ -13,7 +13,7 @@ const Wrapper = styled(Box)({
   justifyContent: "center",
   alignItems: "center",
 });
-export const ExplorerLayout = () => {
+export const ExplorerPage = () => {
   const { fetchRepos } = useRepositoryAction();
   const loading = useSelector(selectLoading);
   useEffect(() => {
@@ -28,7 +28,7 @@ export const ExplorerLayout = () => {
             <CircularProgress />{" "}
           </Wrapper>
         ) : (
-          <GraphPanel />
+          <CommitGraph />
         )}
       </Grid>
       <Grid item md={3} xs={12}>
