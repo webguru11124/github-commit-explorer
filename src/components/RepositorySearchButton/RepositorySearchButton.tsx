@@ -4,7 +4,7 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Typography from "@mui/material/Typography";
 import { debounce } from "@mui/material/utils";
-import { useTheme } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import { Repository } from "../../app/features/repository/respositorySlice";
 import { githubAPIService } from "../../app/api/githubAPIService";
 import { useSnackbar } from "notistack";
@@ -83,14 +83,14 @@ export function RepositorySearchButton() {
       )}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       renderOption={(props, option) => (
-        <li {...props} key={option.id}>
+        <Box component="li" key={option.id} {...props}>
           <Typography
             variant="body1"
             noWrap
             component="span"
             color="text.secondary"
           >
-            {option.owner.login} /
+            {`${option.owner.login} / `}
           </Typography>
           <Typography
             variant="body1"
@@ -100,7 +100,7 @@ export function RepositorySearchButton() {
           >
             {option.name}
           </Typography>
-        </li>
+        </Box>
       )}
     />
   );

@@ -28,6 +28,7 @@ export const useCommitActivities = () => {
       } catch (error) {
         if (error) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          //@ts-expect-error
           enqueueSnackbar(`Error: ${error.message ?? ""} `, {
             variant: "error",
           });
