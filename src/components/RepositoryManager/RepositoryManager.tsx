@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import { RepositoryButton } from "../RepositoryButton/RepositoryButton";
 import { RepositorySearchButton } from "../RepositorySearchButton/RepositorySearchButton";
 import { useSelector } from "react-redux";
-import { RootState, selectRepos } from "../../app/store";
+import { selectRepos } from "../../app/store";
 
 export const RepositoryManager = () => {
   const repos = useSelector(selectRepos);

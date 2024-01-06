@@ -8,6 +8,7 @@ import { Star, Trash2 } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { selectHovered } from "../../app/store";
 import { useRepositoryAction } from "../../app/hooks/useRespositoryAction";
+import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 interface RepositoryButtonProps extends Repository {}
 
 export const RepositoryButton = (props: RepositoryButtonProps) => {
@@ -23,8 +24,6 @@ export const RepositoryButton = (props: RepositoryButtonProps) => {
         backgroundColor: theme.palette.grey[900],
         borderRadius: "4px",
         boxShadow: `8px 0px 0px 0px ${props.color} inset`,
-        paddingX: 3,
-        paddingY: 2,
         color: "white",
         display: "flex",
         justifyContent: "space-between",
@@ -48,59 +47,73 @@ export const RepositoryButton = (props: RepositoryButtonProps) => {
         removeRepo(props.id);
       }}
     >
-      <Box sx={{ flexShrink: 1 }}>
-        <Box component="div" sx={{ textAlign: "left" }}>
-          <Typography variant="button" component="span" color="text.secondary">
-            {`${props.owner.login} / `}
-          </Typography>
-          <Typography
-            variant="button"
-            component="span"
-            sx={{ fontWeight: "bold" }}
-            color="white"
-          >
-            {props.name}
-          </Typography>
-        </Box>
-        <Box
-          component="div"
-          textAlign="left"
-          sx={{ display: "flex", alignItems: "center" }}
-        >
-          {/* <StarBorderIcon sx={{ color: "yellow", mr: 0.5 }} /> */}
-          <Star color="white" size={theme.typography.body2.fontSize} />
-          <Typography
-            variant="body2"
+      <Grid2 container px={3} py={2} spacing={2} width="100%">
+        <Grid2 xs={10}>
+          <Box
             component="div"
-            ml={1}
-            sx={{ fontWeight: "bold", display: "flex", alignItems: "center" }}
+            sx={{ textAlign: "left", display: "flex", flexDirection: "row" }}
           >
-            {formatNumberAsK(props.stargazers_count)}
-          </Typography>
-          <Typography
-            variant="body2"
+            <Typography
+              variant="button"
+              noWrap
+              component="div"
+              color="text.secondary"
+            >
+              {`${props.owner.login} / `}
+            </Typography>
+            <Typography
+              variant="button"
+              component="div"
+              sx={{ fontWeight: "bold" }}
+              color="white"
+            >
+              {props.name}
+            </Typography>
+          </Box>
+          <Box
             component="div"
-            sx={{ ml: 2, display: "flex", alignItems: "center" }}
-            color="text.secondary"
+            textAlign="left"
+            sx={{ display: "flex", alignItems: "center" }}
           >
-            {`Updated ${formatDate(props.updated_at)}`}
-          </Typography>
-        </Box>
-      </Box>
-
-      {ishovered ? (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            "&:active": {
-              opacity: 0.9,
-            },
-          }}
-        >
-          <Trash2></Trash2>
-        </Box>
-      ) : null}
+            {/* <StarBorderIcon sx={{ color: "yellow", mr: 0.5 }} /> */}
+            <Star color="white" size={theme.typography.body2.fontSize} />
+            <Typography
+              variant="body2"
+              component="div"
+              noWrap
+              ml={1}
+              sx={{
+                fontWeight: "bold",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              {formatNumberAsK(props.stargazers_count)}
+            </Typography>
+            <Typography
+              variant="body2"
+              component="span"
+              noWrap
+              sx={{ ml: 2 }}
+              display={{ xs: "none", lg: "block" }}
+              color="text.secondary"
+            >
+              {`Updated ${formatDate(props.updated_at)}`}
+            </Typography>
+          </Box>
+        </Grid2>
+        <Grid2 sx={{ display: "flex", alignItems: "center" }} xs={2}>
+          <Box
+            sx={{
+              "&:active": {
+                opacity: 0.9,
+              },
+            }}
+          >
+            <Trash2 />
+          </Box>
+        </Grid2>
+      </Grid2>
     </MUIButton>
   );
 };

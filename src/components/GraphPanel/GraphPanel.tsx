@@ -124,7 +124,7 @@ export const GraphPanel = () => {
     },
   };
   return (
-    <Box display="flex" alignItems="center" height="100vh">
+    <Box display="flex" alignItems="center" height="100%">
       <Line
         ref={chartRef}
         data={data}

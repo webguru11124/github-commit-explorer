@@ -34,7 +34,15 @@ export function RepositorySearchButton() {
   }, [inputValue, fetchRepos]);
 
   // Directly use the searchResults from RTK Query
-  const options = searchResults || [];
+  const options = React.useMemo(
+    () =>
+      searchResults
+        ? Array.from(
+            new Map(searchResults.map((item) => [item.id, item])).values()
+          )
+        : [],
+    [searchResults]
+  );
 
   if (error) {
     //@ts-expect-error
@@ -42,7 +50,7 @@ export function RepositorySearchButton() {
       variant: "error",
     });
   }
-  
+
   return (
     <Autocomplete
       sx={{
@@ -73,14 +81,21 @@ export function RepositorySearchButton() {
           variant="filled"
         />
       )}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
       renderOption={(props, option) => (
         <li {...props} key={option.id}>
-          <Typography variant="body1" component="span" color="text.secondary">
+          <Typography
+            variant="body1"
+            noWrap
+            component="span"
+            color="text.secondary"
+          >
             {option.owner.login} /
           </Typography>
           <Typography
             variant="body1"
             component="span"
+            noWrap
             sx={{ fontWeight: "bold" }}
           >
             {option.name}

@@ -13,26 +13,29 @@ export const useCommitActivities = () => {
 
   useEffect(() => {
     async function fetchCommitActivities() {
-      const activities: Array<Commits> = await Promise.all(
-        repos.map((repo) =>
-          trigger({
-            owner: repo.owner.login,
-            repo: repo.name,
-            color: repo.color,
-            id: repo.id,
-          }).unwrap()
-        )
-      );
-      setCommitActivities(activities);
+      try {
+        const activities: Array<Commits> = await Promise.all(
+          repos.map((repo) =>
+            trigger({
+              owner: repo.owner.login,
+              repo: repo.name,
+              color: repo.color,
+              id: repo.id,
+            }).unwrap()
+          )
+        );
+        setCommitActivities(activities);
+      } catch (error) {
+        if (error) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          enqueueSnackbar(`Error: ${error.message ?? ""} `, {
+            variant: "error",
+          });
+        }
+      }
     }
     fetchCommitActivities();
-  }, [repos, trigger]);
+  }, [enqueueSnackbar, repos, trigger]);
 
-  if (error && "message" in error) {
-    console.log("error", error);
-    enqueueSnackbar(`Error: ${error.message ?? ""}`, {
-      variant: "error",
-    });
-  }
   return { commitActivities, error };
 };

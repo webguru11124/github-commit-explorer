@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import "./App.css";
 import { ExplorerLayout } from "./components/ExplorerLayout/ExplorerLayout";
-import { useSearchParams } from "react-router-dom"; 
+import { useSearchParams } from "react-router-dom";
 
 function App() {
   // const [searchParams, setSearchParams] = useSearchParams();

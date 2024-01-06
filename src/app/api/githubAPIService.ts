@@ -28,7 +28,6 @@ export const githubAPIService = createApi({
       }),
       transformResponse: (response: CommitActivity[], _meta, arg): Commits => {
         const res: number[] = new Array(7).fill(0);
-        console.log(response);
         if (!isArray(response)) {
           //error handle
           throw new Error("unable to get commit activity");
