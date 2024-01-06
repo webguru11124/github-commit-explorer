@@ -25,11 +25,12 @@ export const useCommitActivities = () => {
           )
         );
         setCommitActivities(activities);
-      } catch (error) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
         if (error) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          //@ts-expect-error
-          enqueueSnackbar(`Error: ${error?.data?.message ?? ""} `, {
+          const message: string =
+            (error?.data && error?.data?.message) ?? error?.message ?? "";
+          enqueueSnackbar(`Error: ${message} `, {
             variant: "error",
           });
         }
