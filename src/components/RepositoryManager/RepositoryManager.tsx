@@ -1,7 +1,11 @@
 import { Box } from "@mui/material";
 import { RepositoryButton } from "../RepositoryButton/RepositoryButton";
 import { RepositorySearchButton } from "../RepositorySearchButton/RepositorySearchButton";
-import { selectRepos } from "../../app/store";
+import {
+  selectLoading,
+  selectLoadingCount,
+  selectRepos,
+} from "../../app/store";
 
 import { useDispatch, useSelector } from "react-redux";
 import { selectHovered } from "../../app/store";
@@ -13,6 +17,8 @@ export const RepositoryManager = () => {
 
   const dispatch = useDispatch();
   const hovered = useSelector(selectHovered);
+  const loading = useSelector(selectLoading);
+  const loadingCount = useSelector(selectLoadingCount);
   return (
     <Box
       px={3}
@@ -34,6 +40,15 @@ export const RepositoryManager = () => {
             ></RepositoryButton>
           </Box>
         ))}
+        {loading
+          ? Array(loadingCount)
+              .fill(null)
+              .map((_, index) => (
+                <Box mt={2} key={index}>
+                  <RepositoryButton loading={true} />
+                </Box>
+              ))
+          : null}
       </Box>
     </Box>
   );

@@ -1,42 +1,73 @@
-import { Box, Button as MUIButton, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  Button as MUIButton,
+  Skeleton,
+  Typography,
+  styled,
+  useTheme,
+} from "@mui/material";
 import { Repository } from "../../app/features/repository/respositorySlice";
 import { formatDate, formatNumberAsK } from "../../helpers";
 import { Star, Trash2 } from "react-feather";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-import { UnknownAction } from "@reduxjs/toolkit";
-interface RepositoryButtonProps {
+
+const StyleButton = styled(MUIButton)(({ theme }) => ({
+  backgroundColor: theme.palette.grey[900],
+  borderRadius: "4px",
+  color: "white",
+  display: "flex",
+  justifyContent: "space-between",
+  "&:hover": {
+    backgroundColor: theme.palette.grey[900], // Set the hover color
+    opacity: 0.8,
+  },
+  "&:active": {
+    opacity: 0.7,
+  },
+}));
+
+type LoadingProps = {
+  loading: true;
+  repo?: Repository;
+  ishovered?: boolean;
+  onClick?: (repo: Repository) => void;
+  onHover?: (repoID: number) => void;
+};
+
+type NotLoadingProps = {
+  loading?: false;
   repo: Repository;
   ishovered: boolean;
   onClick: (repo: Repository) => void;
-  onHover: (repoID: number | null) => UnknownAction;
-}
+  onHover: (repoID: number | null) => void;
+};
 
-export const RepositoryButton = ({
-  repo,
-  ishovered,
-  onClick,
-  onHover,
-}: RepositoryButtonProps) => {
+type RepositoryButtonProps = LoadingProps | NotLoadingProps;
+export const RepositoryButton = (props: RepositoryButtonProps) => {
   const theme = useTheme();
+  if (props.loading) {
+    return (
+      <Skeleton
+        variant="rectangular"
+        width="100%"
+        height={90}
+        
+        component={StyleButton}
+      />
+    );
+  }
+
+  const { repo, ishovered, onClick, onHover } = props as NotLoadingProps;
 
   return (
-    <MUIButton
-      sx={(theme) => ({
-        backgroundColor: theme.palette.grey[900],
-        borderRadius: "4px",
-        boxShadow: `8px 0px 0px 0px ${repo.color} inset`,
-        color: "white",
-        display: "flex",
-        justifyContent: "space-between",
-        "&:hover": {
-          backgroundColor: theme.palette.grey[900], // Set the hover color
-          opacity: 0.8,
-        },
-        "&:active": {
-          opacity: 0.7,
-        },
+    <StyleButton
+      sx={{
+        boxShadow: `8px 0px 0px 0px ${
+          repo.color ?? theme.palette.grey[400]
+        } inset`,
+
         opacity: ishovered ? 1 : 0.3,
-      })}
+      }}
       fullWidth
       onMouseEnter={() => {
         onHover(repo.id);
@@ -115,6 +146,6 @@ export const RepositoryButton = ({
           </Box>
         </Grid2>
       </Grid2>
-    </MUIButton>
+    </StyleButton>
   );
 };

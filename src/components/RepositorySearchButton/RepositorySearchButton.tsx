@@ -45,8 +45,9 @@ export function RepositorySearchButton() {
   );
 
   if (error) {
+    console.log(error);
     //@ts-expect-error
-    enqueueSnackbar(`Error: ${error.message ?? ""}`, {
+    enqueueSnackbar(`Error: ${error.data.message ?? ""}`, {
       variant: "error",
     });
   }

@@ -20,3 +20,5 @@ export type AppDispatch = typeof store.dispatch;
 export const selectRepos = (state: RootState) => state.respository.repos;
 export const selectHovered = (state: RootState) => state.respository.hovered;
 export const selectLoading = (state: RootState) => state.respository.loading;
+export const selectLoadingCount = (state: RootState) =>
+  state.respository.loadingCount;

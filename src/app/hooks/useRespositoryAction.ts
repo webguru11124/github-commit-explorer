@@ -6,6 +6,7 @@ import {
   remove,
   resetRepos,
   setLoading,
+  setLoadingCount,
 } from "../features/repository/respositorySlice";
 import { generateColorFromRepositoryId } from "../../helpers/color";
 import { githubAPIService } from "../api/githubAPIService";
@@ -23,6 +24,8 @@ export function useRepositoryAction() {
     const existingRepoNames = (searchParams.get("repoNames") ?? "")
       .split(",")
       .filter((repo) => repo !== "");
+
+    dispatch(setLoadingCount(existingRepoNames.length));
 
     try {
       const repos: Array<Repository[]> = await Promise.all(
@@ -67,7 +70,6 @@ export function useRepositoryAction() {
 
   const addRepo = React.useCallback(
     (newValue: Repository) => {
-      console.log("call add repo");
       dispatch(
         add({
           ...newValue,

@@ -6,10 +6,10 @@ import { useRepositoryAction } from "../../app/hooks/useRespositoryAction";
 import { useSelector } from "react-redux";
 import { selectLoading } from "../../app/store";
 
-const FullScreenBox = styled(Box)({
+const Wrapper = styled(Box)({
   display: "flex",
-  width: "100vw",
-  height: "100vh",
+  width: "100%",
+  height: "100%",
   justifyContent: "center",
   alignItems: "center",
 });
@@ -20,17 +20,16 @@ export const ExplorerLayout = () => {
     fetchRepos();
   }, [fetchRepos]);
 
-  if (loading) {
-    return (
-      <FullScreenBox>
-        <CircularProgress />
-      </FullScreenBox>
-    );
-  }
   return (
     <Grid container>
       <Grid item md={9} xs={12}>
-        <GraphPanel />
+        {loading ? (
+          <Wrapper>
+            <CircularProgress />{" "}
+          </Wrapper>
+        ) : (
+          <GraphPanel />
+        )}
       </Grid>
       <Grid item md={3} xs={12}>
         <RepositoryManager />

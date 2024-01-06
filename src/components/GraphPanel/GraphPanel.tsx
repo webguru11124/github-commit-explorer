@@ -125,6 +125,7 @@ export const GraphPanel = () => {
       },
     },
   };
+  
   return (
     <Box display="flex" alignItems="center" height="100%">
       <Line
